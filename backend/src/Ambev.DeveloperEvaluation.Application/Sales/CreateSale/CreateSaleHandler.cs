@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 /// <summary>
-/// Handler for processing CreateUserCommand requests
+/// Handler for processing CreateSaleHandler requests
 /// </summary>
 public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
 {

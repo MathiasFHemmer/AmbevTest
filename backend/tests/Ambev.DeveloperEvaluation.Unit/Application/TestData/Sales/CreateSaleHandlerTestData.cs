@@ -1,6 +1,4 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
-using Ambev.DeveloperEvaluation.Domain.Enums;
 using Bogus;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Sales;
@@ -13,8 +11,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Sales;
 public static class CreateHandlerHandlerTestData
 {
     /// <summary>
-    /// Configures the Faker to generate valid User entities.
-    /// The generated users will have valid:
+    /// Configures the Faker to generate valid Sale entities.
+    /// The generated sale will have valid:
     /// - SaleNumber (valid alphanumeric combination)
     /// - CustomerId (Valid random Guid)
     /// - BranchId (Valid random Guid)
@@ -25,7 +23,7 @@ public static class CreateHandlerHandlerTestData
         .RuleFor(sale => sale.BranchId, faker => faker.Random.Guid());
     /// <summary>
     /// Generates a valid Sale entity with randomized data.
-    /// The generated user will have all properties populated with valid values
+    /// The generated sale will have all properties populated with valid values
     /// that meet the system's validation requirements.
     /// </summary>
     /// <returns>A valid Sale entity with randomly generated data.</returns>
