@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Sales.CreateSale;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
@@ -9,11 +11,13 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 [Route("api/[controller]")]
 public class SalesController : BaseController
 {
+    private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public SalesController(IMapper mapper)
+    public SalesController(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -32,6 +36,14 @@ public class SalesController : BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        throw new NotImplementedException($"{nameof(CreateSale)} not implemented!");
+        var command = _mapper.Map<CreateSaleCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>
+        {
+            Success = true,
+            Message = "User created successfully",
+            Data = _mapper.Map<CreateSaleResponse>(response)
+        });
     }
 }
