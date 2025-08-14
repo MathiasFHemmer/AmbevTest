@@ -48,7 +48,7 @@ public static class LoggingExtension
     /// <param name="builder">The <see cref="WebApplicationBuilder" /> to add services to.</param>
     /// <returns>A <see cref="WebApplicationBuilder"/> that can be used to further configure the API services.</returns>
     /// <remarks>
-    /// <para>Logging output are diferents on Debug and Release modes.</para>
+    /// <para>Logging output are different on Debug and Release modes.</para>
     /// </remarks> 
     public static WebApplicationBuilder AddDefaultLogging(this WebApplicationBuilder builder)
     {
@@ -61,8 +61,8 @@ public static class LoggingExtension
                 .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
                 .Enrich.WithProperty("Application", builder.Environment.ApplicationName)
                 .Enrich.FromLogContext()
-                .Enrich.WithExceptionDetails(_destructuringOptionsBuilder)
-                .Filter.ByExcluding(_filterPredicate);
+                .Enrich.WithExceptionDetails(_destructuringOptionsBuilder);
+                //.Filter.ByExcluding(_filterPredicate);
 
             if (Debugger.IsAttached)
             {

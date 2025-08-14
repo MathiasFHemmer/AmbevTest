@@ -42,7 +42,7 @@ public class SalesController : BaseController
         return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>
         {
             Success = true,
-            Message = "User created successfully",
+            Message = "Sale created successfully",
             Data = _mapper.Map<CreateSaleResponse>(response)
         });
     }
