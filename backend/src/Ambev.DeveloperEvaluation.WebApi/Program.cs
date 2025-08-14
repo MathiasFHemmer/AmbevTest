@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
+
 namespace Ambev.DeveloperEvaluation.WebApi;
 
 public class Program

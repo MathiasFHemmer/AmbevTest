@@ -32,12 +32,6 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     /// <returns>The created sale details</returns>
     public async Task<CreateSaleResult> Handle(CreateSaleCommand command, CancellationToken cancellationToken)
     {
-        var validator = new CreateSaleCommandValidator();
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
-
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors);
-
         var branch = await _branchRepository.GetById(command.BranchId);
         if (branch is null)
             throw new DomainException($"Branch not found!");
@@ -47,6 +41,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
             throw new DomainException($"Customer not found!");
 
         var sale = Sale.Create(command.SaleNumber, customer.Id, customer.Name, branch.Id, branch.Name);
+        var valid = sale.ValidateAsync();
         // TODO:
         // Implement repository to persist data
         return new CreateSaleResult()
