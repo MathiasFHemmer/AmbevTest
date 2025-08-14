@@ -45,8 +45,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
 
         var sale = Sale.Create(command.SaleNumber, customer.Id, customer.Name, branch.Id, branch.Name);
         await _saleRepository.CreateAsync(sale, cancellationToken);
-        // TODO:
-        // Implement repository to persist data
+ 
         return new CreateSaleResult()
         {
             Id = sale.Id,
