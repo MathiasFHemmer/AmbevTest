@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 /// <summary>
@@ -10,6 +11,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
 {
 
+    private readonly ISaleRepository _saleRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IBranchRepository _branchRepository;
 
@@ -17,11 +19,12 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     /// Initializes a new instance of CreateSaleHandler
     /// </summary>
     /// <param name="customerRepository">The customer repository</param>
-/// <param name="branchRepository">The company repository</param>
-    public CreateSaleHandler(ICustomerRepository customerRepository, IBranchRepository branchRepository)
+    /// <param name="branchRepository">The company repository</param>
+    public CreateSaleHandler(ICustomerRepository customerRepository, IBranchRepository branchRepository, ISaleRepository saleRepository)
     {
         _customerRepository = customerRepository;
         _branchRepository = branchRepository;
+        _saleRepository = saleRepository;
     }
 
     /// <summary>
@@ -41,7 +44,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
             throw new DomainException($"Customer not found!");
 
         var sale = Sale.Create(command.SaleNumber, customer.Id, customer.Name, branch.Id, branch.Name);
-        var valid = sale.ValidateAsync();
+        await _saleRepository.CreateAsync(sale, cancellationToken);
         // TODO:
         // Implement repository to persist data
         return new CreateSaleResult()
