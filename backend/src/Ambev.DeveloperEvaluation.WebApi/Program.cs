@@ -50,7 +50,6 @@ public class Program
                     typeof(Program).Assembly
                 );
             });
-
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var app = builder.Build();
