@@ -87,6 +87,24 @@ public class Sale : BaseEntity
     public DateTime? CompletedAt { get; internal set; }
 
     /// <summary>
+    /// Creates a new Sale.
+    /// </summary>
+    /// <returns><see cref="Sale"/></returns>
+    public static Sale Create(string saleNumber, Guid customerId, string customerName, Guid branchId, string branchName)
+    {
+        return new Sale
+        {
+            SaleNumber = saleNumber,
+            CustomerId = customerId,
+            BranchId = branchId,
+            CustomerName = customerName,
+            BranchName = branchName,
+            CreatedAt = DateTime.UtcNow,
+            Status = SaleStatus.Pending
+        };
+    }
+
+    /// <summary>
     /// Performs validation of the Sale entity using the <see cref="SaleValidator"/> rules.
     /// SaleItems inside the Sale entity are also validated using the SaleItemValidator.
     /// </summary>
@@ -174,7 +192,7 @@ public class Sale : BaseEntity
             throw new DomainException($"Cannot add an item to a {Status} sale!");
 
         if (_saleItems.Any(item => item.ProductId == productId))
-                throw new DomainException($"Item {productName} is already present on the sale!");
+            throw new DomainException($"Item {productName} is already present on the sale!");
 
         var saleItem = new SaleItem(productId, productName, quantity, unitPrice);
 
@@ -185,6 +203,7 @@ public class Sale : BaseEntity
             throw new DomainException($"Cannot add more than {MaxItemsPerSale} units of a single product to a sale.");
 
         _saleItems.Add(saleItem);
+        RecalculateTotal();
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -218,6 +237,8 @@ public class Sale : BaseEntity
         item.UpdateItemQuantity(newQuantity);
         if (DiscountPolicy is not null)
             item.ApplyDiscountPolicy(DiscountPolicy);
+
+        RecalculateTotal();
     }
 
     public void CancelItem(Guid productId)
@@ -231,5 +252,11 @@ public class Sale : BaseEntity
             throw new DomainException("Item does not exists on this sale!");
 
         item.Cancel();
+        RecalculateTotal();
+    }
+
+    private void RecalculateTotal()
+    {
+        TotalAmount = _saleItems.Sum(item => item.TotalPrice);
     }
 }

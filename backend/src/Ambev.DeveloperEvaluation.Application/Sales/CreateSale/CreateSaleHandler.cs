@@ -1,6 +1,7 @@
 using AutoMapper;
 using MediatR;
 using FluentValidation;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 /// <summary>
@@ -9,12 +10,18 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
 {
 
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IBranchRepository _branchRepository;
+
     /// <summary>
     /// Initializes a new instance of CreateSaleHandler
     /// </summary>
-    /// <param name="mapper">The AutoMapper instance</param>
-    public CreateSaleHandler()
+    /// <param name="customerRepository">The customer repository</param>
+/// <param name="branchRepository">The company repository</param>
+    public CreateSaleHandler(ICustomerRepository customerRepository, IBranchRepository branchRepository)
     {
+        _customerRepository = customerRepository;
+        _branchRepository = branchRepository;
     }
 
     /// <summary>
@@ -31,8 +38,26 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
+        var branch = await _branchRepository.GetById(command.BranchId);
+        if (branch is null)
+            throw new DomainException($"Branch not found!");
+
+        var customer = await _customerRepository.GetById(command.CustomerId);
+        if (customer is null)
+            throw new DomainException($"Customer not found!");
+
+        var sale = Sale.Create(command.SaleNumber, customer.Id, customer.Name, branch.Id, branch.Name);
         // TODO:
-        // Implement sale creation logic
-        throw new NotImplementedException($"{nameof(Handle)} not implemented!");
+        // Implement repository to persist data
+        return new CreateSaleResult()
+        {
+            Id = sale.Id,
+            SaleNumber = sale.SaleNumber,
+            CustomerId = sale.CustomerId,
+            CustomerName = sale.CustomerName,
+            BranchId = sale.BranchId,
+            BranchName = sale.BranchName,
+        };
+
     }
 }
