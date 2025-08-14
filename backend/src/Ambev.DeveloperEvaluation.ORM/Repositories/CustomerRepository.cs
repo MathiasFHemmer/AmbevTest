@@ -6,6 +6,10 @@ public sealed class CustomerRepository : ICustomerRepository
 {
     public Task<Customer> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(new Customer
+        {
+            Id = id,
+            Name = "Placeholder Customer"
+        });
     }
 }

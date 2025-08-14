@@ -2,13 +2,16 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.Domain.Policies;
-using Ambev.DeveloperEvaluation.Domain.Specifications.Sales;
 using Ambev.DeveloperEvaluation.Domain.Validation.Sales;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 
 public class SaleItem : BaseEntity
 {
+    /// <summary>
+    /// Gets or Sets this item Sale Identifier.
+    /// </summary>
+    public Guid SaleId { get; set; } = Guid.Empty;
     /// <summary>
     /// Gets or Sets the product identifier associated with this Sale item.
     /// Must not be null or empty.

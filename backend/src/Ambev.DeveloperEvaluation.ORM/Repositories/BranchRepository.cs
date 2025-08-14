@@ -6,6 +6,10 @@ public sealed class BranchRepository : IBranchRepository
 {
     public Task<Branch> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(new Branch
+        {
+            Id = id,
+            Name = "Placeholder Branch"
+        });
     }
 }
