@@ -125,7 +125,6 @@ public class SaleValidatorTest
         // Arrange
         var sale = SaleTestData
             .Generate()
-            .WithEmptyItems()
             .WithStatus(SaleStatus.Completed);
 
         // Act
@@ -145,7 +144,6 @@ public class SaleValidatorTest
             
         var sale = SaleTestData
             .Generate()
-            .WithEmptyItems()
             .WithSaleItem(saleItem);
 
         // Act

@@ -17,15 +17,15 @@ public class AddSaleItemCommandValidator : AbstractValidator<AddSaleItemCommand>
     public AddSaleItemCommandValidator()
     {
         RuleFor(sale => sale.SaleId)
-            .NotEmpty().WithMessage("SaleId must be greater than zero.");
+            .NotEmpty().WithMessage($"{nameof(AddSaleItemCommand.SaleId)} must be greater than zero.");
 
         RuleFor(sale => sale.ProductId)
-            .NotEmpty().WithMessage("ProductId must be greater than zero.");
+            .NotEmpty().WithMessage($"{nameof(AddSaleItemCommand.ProductId)} must be greater than zero.");
 
         RuleFor(sale => sale.Quantity)
-            .GreaterThan(0u).WithMessage("Quantity must be greater than zero.");
+            .GreaterThan(0u).WithMessage($"{nameof(AddSaleItemCommand.Quantity)} must be greater than zero.");
 
         RuleFor(sale => sale.UnitPrice)
-            .GreaterThan(0m).WithMessage("UnitPrice must be greater than zero.");
+            .GreaterThan(0m).WithMessage($"{nameof(AddSaleItemCommand.UnitPrice)} must be greater than zero.");
     }
 }

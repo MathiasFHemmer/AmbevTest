@@ -191,7 +191,7 @@ public class Sale : BaseEntity
         if (!modifySaleItemSpecification.IsSatisfiedBy(this))
             throw new DomainException($"Cannot add an item to a {Status} sale!");
 
-        if (ContainsActiveItem(productId))
+        if (GetItem(productId) != null)
             throw new DuplicateItemInSaleException(productName);
 
         var saleItem = new SaleItem(productId, productName, quantity, unitPrice);
@@ -209,24 +209,13 @@ public class Sale : BaseEntity
     }
 
     /// <summary>
-    /// Checks if sale already contains the item in a Confirmed state
-    /// Items that are Cancelled or Unknown are ignored
+    /// Gets an item from this sale
     /// </summary>
     /// <param name="productId"></param>
-    /// <returns>True if the Sale Item collection contains a product with the provided Id in Confirmed status. False otherwise</returns>
-    private bool ContainsActiveItem(Guid productId)
-    {
-        return _saleItems.Any(item => item.ProductId == productId && item.Status == SaleItemStatus.Confirmed);
-    }
-
-    /// <summary>
-    /// Gets an item from this sale, or null if the product id is present.
-    /// </summary>
-    /// <param name="productId"></param>
-    /// <returns>SaleItem or Null</returns>
+    /// <returns>SaleItem, if present and active on the current sale, Null otherwise</returns>
     public SaleItem? GetItem(Guid productId)
     {
-        return _saleItems.FirstOrDefault(item => item.ProductId == productId);
+        return _saleItems.FirstOrDefault(item => item.ProductId == productId && item.Status == SaleItemStatus.Confirmed);
     }
 
     /// <summary>
@@ -259,9 +248,9 @@ public class Sale : BaseEntity
         if (!modifySaleItemSpecification.IsSatisfiedBy(this))
             throw new DomainException($"Cannot cancel an item on a {Status} sale!");
 
-        var item = _saleItems.FirstOrDefault(item => item.ProductId == productId);
+        var item = GetItem(productId);
         if (item is null)
-            throw new DomainException("Item does not exists on this sale!");
+            throw new NotFoundException(productId, typeof(SaleItem));
 
         item.Cancel();
         RecalculateTotal();

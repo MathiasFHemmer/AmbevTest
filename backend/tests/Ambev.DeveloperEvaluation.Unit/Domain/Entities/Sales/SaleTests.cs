@@ -196,7 +196,7 @@ public class SaleTests
         var sale = SaleTestData.Generate();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => sale.CancelItem(Guid.NewGuid()));
+        Assert.Throws<NotFoundException>(() => sale.CancelItem(Guid.NewGuid()));
     }
 
     [Fact(DisplayName = "CancelItem should mark item as cancelled")]
@@ -212,7 +212,7 @@ public class SaleTests
         sale.CancelItem(saleItem.ProductId);
 
         // Assert
-        var item = sale.GetItem(saleItem.ProductId);
+        var item = sale._saleItems.Where(item => item.ProductId == saleItem.ProductId).FirstOrDefault();
         Assert.NotNull(item);
         Assert.Equal(SaleItemStatus.Cancelled, item.Status);
     }

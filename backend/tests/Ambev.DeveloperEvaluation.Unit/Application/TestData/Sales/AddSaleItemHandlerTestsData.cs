@@ -13,17 +13,19 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Sales;
 public static class AddSaleItemHandlerTestsData
 {
     /// <summary>
-    /// Configures the Faker to generate valid Sale entities.
+    /// Configures the Faker to generate valid normalized AddSaleItem command.
     /// The generated sale will have valid:
-    /// - SaleNumber (valid alphanumeric combination)
-    /// - CustomerId (Valid random Guid)
-    /// - BranchId (Valid random Guid)
+    /// - SaleId (Valid random Guid)
+    /// - ProductId (Valid random Guid)
+    /// - Quantity (1u)
+    /// - UnitPrice (1m)
     /// </summary>
     private static readonly Faker<AddSaleItemCommand> AddSaleItemCommandFaker = new Faker<AddSaleItemCommand>()
         .RuleFor(sale => sale.SaleId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.ProductId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.Quantity, 1u)
         .RuleFor(sale => sale.UnitPrice, 1m);
+        
     /// <summary>
     /// Generates a valid AddSaleItemCommand command with randomized data.
     /// The generated sale will have all properties populated with valid values

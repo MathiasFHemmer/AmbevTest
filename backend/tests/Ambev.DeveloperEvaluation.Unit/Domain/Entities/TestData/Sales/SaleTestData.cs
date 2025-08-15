@@ -36,6 +36,7 @@ public static class SaleTestData
 
     public static Sale WithSaleItem(this Sale sale, SaleItem item)
     {
+        item.SaleId = sale.Id;
         sale._saleItems.Add(item);
         return sale;
     }
@@ -55,12 +56,6 @@ public static class SaleTestData
     public static Sale WithCustomerName(this Sale sale, string? customerName)
     {
         sale.CustomerName = customerName;
-        return sale;
-    }
-
-    public static Sale WithEmptyItems(this Sale sale)
-    {
-        sale._saleItems = new();
         return sale;
     }
 

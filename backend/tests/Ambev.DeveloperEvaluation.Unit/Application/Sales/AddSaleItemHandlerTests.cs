@@ -1,5 +1,4 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
@@ -14,7 +13,7 @@ using Xunit;
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales;
 
 /// <summary>
-/// Contains unit tests for the <see cref="AddSaleItemHandlerTests"/> class.
+/// Contains unit tests for the <see cref="AddSaleItemHandler"/> class.
 /// </summary>
 public sealed class AddSaleItemHandlerTests
 {
@@ -45,7 +44,50 @@ public sealed class AddSaleItemHandlerTests
         expectedSaleItem.ProductName.Should().BeEquivalentTo(productName);
     }
 
-    [Fact(DisplayName = "Given active sale with item present When adding the same product Then throws exception")]
+    [Fact(DisplayName = "Given invalid sale id When adding sale item Then throws NotFoundException")]
+    public async Task Handle_AddItemToInvalidSaleId_ThrowsNotFoundException()
+    {
+        // Arrange
+        var command = AddSaleItemHandlerTestsData.Generate();
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Sale?)null);
+        // Act and Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+        
+    }
+
+    [Theory(DisplayName = "Given sale not in pending state When adding sale item Then throws DomainException")]
+    [InlineData(SaleStatus.Cancelled)]
+    [InlineData(SaleStatus.Completed)]
+    [InlineData(SaleStatus.Unknown)]
+    public async Task Handle_AddItemToSaleNotInPendingStatus_ThrowsDomainException(SaleStatus status)
+    {
+        // Arrange
+        var sale = SaleTestData.Generate()
+            .WithStatus(status);
+        var command = AddSaleItemHandlerTestsData.Generate();
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Sale?)null);
+        // Act and Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+
+    }
+
+    [Fact(DisplayName = "Given valid sale When adding item with quantity above threshold Then throws DomainException")]
+    public async Task Handle_AddItemWithQuantityAboveThreshold_ThrowsDomainException()
+    {
+        // Arrange
+        var sale = SaleTestData.Generate();
+        var command = AddSaleItemHandlerTestsData.Generate()
+            .WithQuantity(Sale.MaxItemsPerSale+1);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Sale?)null);
+        // Act and Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+
+    }
+
+    [Fact(DisplayName = "Given active sale with item present When adding the same product Then throws DuplicateItemInSaleException")]
     public async Task Handler_AddDuplicateItem_ThrowsException()
     {
         // Arrange

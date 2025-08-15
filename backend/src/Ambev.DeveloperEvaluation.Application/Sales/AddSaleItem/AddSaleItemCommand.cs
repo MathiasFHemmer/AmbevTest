@@ -3,18 +3,18 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 
 /// <summary>
-/// Command for adding a new sale item to a a.
+/// Command for adding a new sale item.
 /// </summary>
 /// <remarks>
 /// This command is used to capture the required data for creating a sale item, 
 /// It implements <see cref="IRequest{TResponse}"/> to initiate the request 
-/// that returns a <see cref="CreateSaleResult"/>.
+/// that returns a <see cref="AddSaleItemResult"/>.
 /// 
 /// The data provided in this command is validated using the 
-/// <see cref="CreateSaleCommandValidator"/> which extends 
+/// <see cref="AddSaleItemCommandValidator"/> which extends 
 /// <see cref="AbstractValidator{T}"/> to ensure that the fields are correctly 
 /// populated and follow the required rules.
-/// </remarks>public sealed class AddSaleItemCommand
+/// </remarks>
 public sealed class AddSaleItemCommand : IRequest<AddSaleItemResult>
 {
     /// <summary>
