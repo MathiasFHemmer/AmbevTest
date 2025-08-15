@@ -3,7 +3,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Exceptions
     public class NotFoundException : DomainException
     {
         public NotFoundException(Guid id, Type entity) 
-        : base($"{nameof(entity)} with ID {id} not found!")
+        : base($"{entity.Name} with ID {id} not found!")
         {
         }
 
