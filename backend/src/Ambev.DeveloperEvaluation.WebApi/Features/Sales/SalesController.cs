@@ -1,8 +1,10 @@
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -76,6 +78,36 @@ public class SalesController : BaseController
             Success = true,
             Message = "Sale Item created successfully",
             Data = _mapper.Map<AddSaleItemResponse>(response)
+        });
+    }
+
+    /// <summary>
+    /// Adds a new Sale Item to the Sale
+    /// </summary>
+    /// <param name="request">The sale item creation request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The created sale item identifier</returns>
+    [HttpDelete("{SaleId:guid}/Item/{ProductId:guid}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateSaleItem([FromRoute] Guid SaleId, Guid ProductId, CancellationToken cancellationToken)
+    {
+        var request = new CancelSaleItemRequest
+        {
+            SaleId = SaleId,
+            ProductId = ProductId
+        };
+        await new CancelSaleItemRequestValidator()
+            .ValidateAsync(request, cancellationToken)
+            .ThrowIfInvalid();
+
+        var command = _mapper.Map<CancelSaleItemCommand>(request);
+
+        await _mediator.Send(command, cancellationToken);
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "Product cancelled from sale successfully!"
         });
     }
 }

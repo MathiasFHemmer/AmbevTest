@@ -1,10 +1,7 @@
 using AutoMapper;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 
 /// <summary>
 /// Profile for mapping between Application and API CreateUser responses

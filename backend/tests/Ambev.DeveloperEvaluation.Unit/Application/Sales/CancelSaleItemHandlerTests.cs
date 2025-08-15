@@ -49,6 +49,25 @@ public sealed class CancelSaleItemHandlerTests
         sale.SaleItems.Count.Should().Be(0);
     }
 
+    [Fact(DisplayName = "Should throw when sale exists but its cancelled")]
+    public async Task Handle_SaleIsCancelled_ThrowsNotFoundException()
+    {
+        // Arrange
+        var saleItem = SaleItemTestData.Generate();
+        var sale = SaleTestData.Generate()
+            .WithSaleItem(saleItem)
+            .WithStatus(SaleStatus.Cancelled);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+
+        var command = CancelSaleItemHandlerTestData.Generate()
+            .WithSaleId(sale.Id)
+            .WithProductId(saleItem.ProductId);
+
+        // Act and Assert
+        await Assert.ThrowsAsync<DomainException>(() => _handler.Handle(command, CancellationToken.None));
+    }
+
     [Fact(DisplayName = "Should throw when sale does not exist")]
     public async Task Handle_NonExistentSale_ThrowsNotFoundException()
     {
