@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.Domain.Policies;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Sales;
 
@@ -31,7 +32,7 @@ public class SaleTests
             .WithSaleItem(saleItem);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => sale.AddItem(saleItem.ProductId, "Product", 1, 10m));
+        Assert.Throws<DuplicateItemInSale>(() => sale.AddItem(saleItem.ProductId, "Product", 1, 10m));
     }
 
     [Fact(DisplayName = "AddItem should throw when quantity exceeds maximum allowed per product")]

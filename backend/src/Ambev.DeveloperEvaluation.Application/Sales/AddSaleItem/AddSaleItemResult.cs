@@ -12,4 +12,5 @@ public sealed class AddSaleItemResult
     /// Gets or Sets the created sale Id
     /// </summary>
     public Guid Id { get; set; } = Guid.Empty;
+    public string ProductName { get; set; } = string.Empty;
 }

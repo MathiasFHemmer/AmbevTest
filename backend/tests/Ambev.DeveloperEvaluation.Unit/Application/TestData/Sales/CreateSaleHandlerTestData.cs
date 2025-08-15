@@ -22,11 +22,11 @@ public static class CreateSaleHandlerTestData
         .RuleFor(sale => sale.CustomerId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.BranchId, faker => faker.Random.Guid());
     /// <summary>
-    /// Generates a valid Sale entity with randomized data.
+    /// Generates a valid CreateSaleCommand object with randomized data.
     /// The generated sale will have all properties populated with valid values
     /// that meet the system's validation requirements.
     /// </summary>
-    /// <returns>A valid Sale entity with randomly generated data.</returns>
+    /// <returns>A valid CreateSaleCommand entity with randomly generated data.</returns>
     public static CreateSaleCommand Generate()
     {
         return CreateSaleCommandFaker.Generate();

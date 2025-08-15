@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Policies;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
 using NSubstitute;

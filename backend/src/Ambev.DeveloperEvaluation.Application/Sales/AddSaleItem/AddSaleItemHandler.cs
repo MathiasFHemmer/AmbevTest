@@ -38,13 +38,15 @@ public sealed class AddSaleItemHandler : IRequestHandler<AddSaleItemCommand, Add
 
         // TODO:
         // Implement product lookup on the repository
+        var productName = "Placeholder";
 
-        var saleItem = sale.AddItem(command.ProductId, "Placeholder", command.Quantity, command.UnitPrice);
+        var saleItem = sale.AddItem(command.ProductId, productName, command.Quantity, command.UnitPrice);
         await _saleRepository.UpdateAsync(sale, cancellationToken);
  
         return new AddSaleItemResult()
         {
             Id = saleItem.Id,
+            ProductName = productName
         };
 
     }

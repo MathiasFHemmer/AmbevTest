@@ -8,6 +8,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
 public static class SaleItemTestData
 {
     private static readonly Faker<SaleItem> SaleItemFaker = new Faker<SaleItem>()
+        .RuleFor(item => item.Id, faker => faker.Random.Guid())
         .RuleFor(item => item.ProductId, faker => faker.Random.Guid())
         .RuleFor(item => item.ProductName, faker => faker.Commerce.ProductName())
         .RuleFor(item => item.Quantity, faker => faker.Random.UInt(1, 20))
