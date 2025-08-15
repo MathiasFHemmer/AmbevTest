@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
@@ -66,11 +67,9 @@ public class Sale : BaseEntity
 
     internal List<SaleItem> _saleItems = new();
     /// <summary>
-    /// Gets the collection of items included in this Sale.
-    /// This collection is readonly and must contain at least one item.
-    /// Operations to add or remove items should be done through dedicated methods to ensure business rules are enforced.
+    /// Gets the collection of active items included in this Sale.
     /// </summary>
-    public IReadOnlyCollection<SaleItem> SaleItems { get => _saleItems; }
+    public IReadOnlyCollection<SaleItem> SaleItems { get => _saleItems.Where(item => item.Status == SaleItemStatus.Confirmed).ToList(); }
 
     /// <summary>
     /// Gets the date and time when the user was created.
@@ -192,8 +191,8 @@ public class Sale : BaseEntity
         if (!modifySaleItemSpecification.IsSatisfiedBy(this))
             throw new DomainException($"Cannot add an item to a {Status} sale!");
 
-        if (_saleItems.Any(item => item.ProductId == productId))
-            throw new DuplicateItemInSale(productName);
+        if (ContainsActiveItem(productId))
+            throw new DuplicateItemInSaleException(productName);
 
         var saleItem = new SaleItem(productId, productName, quantity, unitPrice);
 
@@ -207,6 +206,17 @@ public class Sale : BaseEntity
         RecalculateTotal();
         UpdatedAt = DateTime.UtcNow;
         return saleItem;
+    }
+
+    /// <summary>
+    /// Checks if sale already contains the item in a Confirmed state
+    /// Items that are Cancelled or Unknown are ignored
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <returns>True if the Sale Item collection contains a product with the provided Id in Confirmed status. False otherwise</returns>
+    private bool ContainsActiveItem(Guid productId)
+    {
+        return _saleItems.Any(item => item.ProductId == productId && item.Status == SaleItemStatus.Confirmed);
     }
 
     /// <summary>
@@ -259,6 +269,6 @@ public class Sale : BaseEntity
 
     private void RecalculateTotal()
     {
-        TotalAmount = _saleItems.Sum(item => item.TotalPrice);
+        TotalAmount = SaleItems.Sum(item => item.TotalPrice);
     }
 }

@@ -32,7 +32,7 @@ public class SaleTests
             .WithSaleItem(saleItem);
 
         // Act & Assert
-        Assert.Throws<DuplicateItemInSale>(() => sale.AddItem(saleItem.ProductId, "Product", 1, 10m));
+        Assert.Throws<DuplicateItemInSaleException>(() => sale.AddItem(saleItem.ProductId, "Product", 1, 10m));
     }
 
     [Fact(DisplayName = "AddItem should throw when quantity exceeds maximum allowed per product")]

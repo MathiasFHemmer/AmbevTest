@@ -48,6 +48,5 @@ public sealed class AddSaleItemHandler : IRequestHandler<AddSaleItemCommand, Add
             Id = saleItem.Id,
             ProductName = productName
         };
-
     }
 }

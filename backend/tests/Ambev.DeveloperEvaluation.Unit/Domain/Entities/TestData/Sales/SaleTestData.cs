@@ -15,8 +15,7 @@ public static class SaleTestData
         .RuleFor(sale => sale.CustomerName, faker => faker.Person.FullName)
         .RuleFor(sale => sale.BranchId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.BranchName, faker => faker.Company.CompanyName())
-        .RuleFor(sale => sale.TotalAmount, faker => faker.Finance.Amount(1, 10000))
-        .FinishWith((f, sale) => sale._saleItems.Add(SaleItemTestData.Generate()));
+        .RuleFor(sale => sale.TotalAmount, faker => faker.Finance.Amount(1, 10000));
 
     public static Sale Generate()
     {

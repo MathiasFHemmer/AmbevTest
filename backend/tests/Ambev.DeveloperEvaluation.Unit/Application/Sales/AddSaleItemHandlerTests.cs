@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
 using Ambev.DeveloperEvaluation.Unit.Domain.Sales;
@@ -40,5 +42,114 @@ public sealed class AddSaleItemHandlerTests
 
         // Assert
         expectedSaleItem.ProductName.Should().BeEquivalentTo(productName);
+    }
+
+    [Fact(DisplayName = "Given active sale with item present When adding the same product Then throws exception")]
+    public async Task Handler_AddDuplicateItem_ThrowsException()
+    {
+        // Arrange
+        var sale = SaleTestData.Generate();
+        var saleIem = SaleItemTestData.Generate();
+        var command = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithProductId(saleIem.ProductId);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+        sale.AddItem(command.ProductId, "Placeholder", command.Quantity, command.UnitPrice);
+        // Act and Assert
+        await Assert.ThrowsAsync<DuplicateItemInSaleException>(() => _handler.Handle(command, CancellationToken.None));
+    }
+
+    [Fact(DisplayName = "Given active sale When adding products Then must recalculate the sale total")]
+    public async Task Handler_AddNewProduct_RecalculatesSaleTotal()
+    {
+        // Arrange
+        var sale = SaleTestData.Generate();
+
+        var unitPrice = 10m;
+        var quantity = 1u;
+        var expectedTotal = unitPrice * quantity * 2;
+
+        var commandSaleItem1 = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice);
+
+        var commandSaleItem2 = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+
+        // Act
+        sale.AddItem(commandSaleItem1.ProductId, "Placeholder", commandSaleItem1.Quantity, commandSaleItem1.UnitPrice);
+        sale.AddItem(commandSaleItem2.ProductId, "Placeholder", commandSaleItem2.Quantity, commandSaleItem2.UnitPrice);
+
+        // Assert
+        sale.SaleItems.Count.Should().Be(2);
+        sale.TotalAmount.Should().Be(expectedTotal);
+    }
+
+    [Fact(DisplayName = "Given active sale with cancelled item When adding another product Then cancelled item must not impact total")]
+    public void Handler_AddNewProductWithCancelledItem_RecalculatesSaleTotalIgnoresCancelledItem()
+    {
+        // Arrange
+        var unitPrice = 10m;
+        var quantity = 1u;
+        var expectedTotal = unitPrice * quantity;
+
+        var saleIem = SaleItemTestData.Generate()
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice)
+            .WithStatus(SaleItemStatus.Cancelled);
+
+        var sale = SaleTestData.Generate()
+            .WithSaleItem(saleIem);
+
+        var commandSaleItem = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+
+        // Act
+        sale.AddItem(commandSaleItem.ProductId, "Placeholder", commandSaleItem.Quantity, commandSaleItem.UnitPrice);
+
+        // Assert
+        sale.SaleItems.Count.Should().Be(1);
+        sale.TotalAmount.Should().Be(expectedTotal);
+    }
+    
+    [Fact(DisplayName = "Given active sale with unknown status item When adding another product Then cancelled item must not impact total")]
+    public void Handler_AddNewProductWithUnknownStatusItem_RecalculatesSaleTotalIgnoresUnknownStatusItem()
+    {
+        // Arrange
+        var unitPrice = 10m;
+        var quantity = 1u;
+        var expectedTotal = unitPrice * quantity;
+
+        var saleIem = SaleItemTestData.Generate()
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice)
+            .WithStatus(SaleItemStatus.Unknown);
+
+        var sale = SaleTestData.Generate()
+            .WithSaleItem(saleIem);
+
+        var commandSaleItem = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+
+        // Act
+        sale.AddItem(commandSaleItem.ProductId, "Placeholder", commandSaleItem.Quantity, commandSaleItem.UnitPrice);
+
+        // Assert
+        sale.SaleItems.Count.Should().Be(1);
+        sale.TotalAmount.Should().Be(expectedTotal);
     }
 }

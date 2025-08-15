@@ -40,4 +40,21 @@ public static class AddSaleItemHandlerTestsData
         command.SaleId = id;
         return command;
     }
+
+    public static AddSaleItemCommand WithProductId(this AddSaleItemCommand command, Guid id)
+    {
+        command.ProductId = id;
+        return command;
+    }
+    public static AddSaleItemCommand WithUnitPrice(this AddSaleItemCommand command, decimal unitPrice)
+    {
+        command.UnitPrice = unitPrice;
+        return command;
+    }
+
+    public static AddSaleItemCommand WithQuantity(this AddSaleItemCommand command, uint quantity)
+    {
+        command.Quantity = quantity;
+        return command;
+    }
 }
