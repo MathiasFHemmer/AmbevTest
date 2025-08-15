@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Policies;
 using Ambev.DeveloperEvaluation.Domain.Specifications.Sales;
 using Ambev.DeveloperEvaluation.Domain.Validation.Sales;
@@ -185,14 +186,14 @@ public class Sale : BaseEntity
     /// <param name="quantity"></param>
     /// <param name="unitPrice"></param>
     /// <exception cref="DomainException"></exception>
-    public void AddItem(Guid productId, string productName, uint quantity, decimal unitPrice)
+    public SaleItem AddItem(Guid productId, string productName, uint quantity, decimal unitPrice)
     {
         var modifySaleItemSpecification = new ModifySaleItemSpecification();
         if (!modifySaleItemSpecification.IsSatisfiedBy(this))
             throw new DomainException($"Cannot add an item to a {Status} sale!");
 
         if (_saleItems.Any(item => item.ProductId == productId))
-            throw new DomainException($"Item {productName} is already present on the sale!");
+            throw new DuplicateItemInSale(productName);
 
         var saleItem = new SaleItem(productId, productName, quantity, unitPrice);
 
@@ -205,6 +206,7 @@ public class Sale : BaseEntity
         _saleItems.Add(saleItem);
         RecalculateTotal();
         UpdatedAt = DateTime.UtcNow;
+        return saleItem;
     }
 
     /// <summary>

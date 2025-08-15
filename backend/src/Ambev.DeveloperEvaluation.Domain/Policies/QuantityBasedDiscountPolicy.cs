@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Policies;
 
 public class QuantityBasedDiscountPolicy : IDiscountPolicy

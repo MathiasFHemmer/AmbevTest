@@ -3,6 +3,7 @@ using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 /// <summary>
@@ -19,7 +20,8 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     /// Initializes a new instance of CreateSaleHandler
     /// </summary>
     /// <param name="customerRepository">The customer repository</param>
-    /// <param name="branchRepository">The company repository</param>
+    /// <param name="branchRepository">The branch repository</param>
+    /// <param name="saleRepository">The sale repository</param>
     public CreateSaleHandler(ICustomerRepository customerRepository, IBranchRepository branchRepository, ISaleRepository saleRepository)
     {
         _customerRepository = customerRepository;

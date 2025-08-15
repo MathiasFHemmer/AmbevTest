@@ -1,5 +1,7 @@
+using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Sales.CreateSale;
 using AutoMapper;
 using FluentValidation;
@@ -44,6 +46,36 @@ public class SalesController : BaseController
             Success = true,
             Message = "Sale created successfully",
             Data = _mapper.Map<CreateSaleResponse>(response)
+        });
+    }
+
+    /// <summary>
+    /// Adds a new Sale Item to the Sale
+    /// </summary>
+    /// <param name="request">The sale item creation request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The created sale item identifier</returns>
+    [HttpPost("{SaleId:guid}/Items")]
+    [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateSaleItem([FromRoute] Guid SaleId, [FromBody] AddSaleItemRequest request, CancellationToken cancellationToken)
+    {
+        await new AddSaleItemRequestValidator()
+            .ValidateAsync(request, cancellationToken)
+            .ThrowIfInvalid();
+
+        if (SaleId == Guid.Empty)
+            throw new ValidationException($"{nameof(SaleId)} must be present!");
+
+        var command = _mapper.Map<AddSaleItemCommand>(request);
+        command.SaleId = SaleId;
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<AddSaleItemResponse>
+        {
+            Success = true,
+            Message = "Sale Item created successfully",
+            Data = _mapper.Map<AddSaleItemResponse>(response)
         });
     }
 }
