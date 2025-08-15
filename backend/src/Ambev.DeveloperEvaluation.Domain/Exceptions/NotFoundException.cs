@@ -8,7 +8,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Exceptions
         }
 
         public NotFoundException(Guid id, string entity, Exception innerException) 
-        : base($"{nameof(entity)} with ID {id} not found!", innerException)
+        : base($"{entity} with ID {id} not found!", innerException)
         {
         }
     }
