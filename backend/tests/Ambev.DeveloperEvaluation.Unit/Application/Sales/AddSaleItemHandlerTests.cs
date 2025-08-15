@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
+using Ambev.DeveloperEvaluation.Domain.Policies;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
 using Ambev.DeveloperEvaluation.Unit.Domain.Sales;
@@ -121,7 +122,7 @@ public sealed class AddSaleItemHandlerTests
         sale.SaleItems.Count.Should().Be(1);
         sale.TotalAmount.Should().Be(expectedTotal);
     }
-    
+
     [Fact(DisplayName = "Given active sale with unknown status item When adding another product Then cancelled item must not impact total")]
     public void Handler_AddNewProductWithUnknownStatusItem_RecalculatesSaleTotalIgnoresUnknownStatusItem()
     {
@@ -136,6 +137,42 @@ public sealed class AddSaleItemHandlerTests
             .WithStatus(SaleItemStatus.Unknown);
 
         var sale = SaleTestData.Generate()
+            .WithSaleItem(saleIem);
+
+        var commandSaleItem = AddSaleItemHandlerTestsData.Generate()
+            .WithSaleId(sale.Id)
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice);
+
+        _saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(sale);
+
+        // Act
+        sale.AddItem(commandSaleItem.ProductId, "Placeholder", commandSaleItem.Quantity, commandSaleItem.UnitPrice);
+
+        // Assert
+        sale.SaleItems.Count.Should().Be(1);
+        sale.TotalAmount.Should().Be(expectedTotal);
+    }
+    
+    [Fact(DisplayName = "Given active sale with discount policy  When adding new product Then must apply discount policy")]
+    public void Handler_AddNewItemWithDiscountPolicy_AppliesDiscountPolicy()
+    {
+        // Arrange
+        var discount = 0.3m; // 30%
+        var discountPolicy = Substitute.For<IDiscountPolicy>();
+        discountPolicy.GetDiscount(Arg.Any<SaleItem>()).Returns(discount);
+
+        var unitPrice = 10m;
+        var quantity = 1u;
+        var expectedTotal = unitPrice * quantity * (1-discount);
+
+        var saleIem = SaleItemTestData.Generate()
+            .WithQuantity(quantity)
+            .WithUnitPrice(unitPrice)
+            .WithStatus(SaleItemStatus.Unknown);
+
+        var sale = SaleTestData.Generate()
+            .WithDiscountPolicy(discountPolicy)
             .WithSaleItem(saleIem);
 
         var commandSaleItem = AddSaleItemHandlerTestsData.Generate()
