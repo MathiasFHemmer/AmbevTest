@@ -14,7 +14,7 @@ public static class AddSaleItemHandlerTestsData
 {
     /// <summary>
     /// Configures the Faker to generate valid normalized AddSaleItem command.
-    /// The generated sale will have valid:
+    /// The generated command will have valid:
     /// - SaleId (Valid random Guid)
     /// - ProductId (Valid random Guid)
     /// - Quantity (1u)
@@ -28,7 +28,7 @@ public static class AddSaleItemHandlerTestsData
         
     /// <summary>
     /// Generates a valid AddSaleItemCommand command with randomized data.
-    /// The generated sale will have all properties populated with valid values
+    /// The generated command will have all properties populated with valid values
     /// that meet the system's validation requirements.
     /// </summary>
     /// <returns>A valid AddSaleItemCommand command with randomly generated data.</returns>

@@ -1,5 +1,7 @@
+using Ambev.DeveloperEvaluation.Common.Pagination;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.ORM.Pagination;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
@@ -39,4 +41,12 @@ public interface ISaleRepository
     /// <param name="cancellationToken">Cancellation token</param>
     /// /// <returns>True if the sale was deleted, false if not found</returns>
     Task<bool> UpdateAsync(Sale sale, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Handles paginated requests for listing sales
+    /// </summary>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>A paginated list of sales </returns>
+    Task<PaginatedList<Sale>> ListSales(PaginateRequest pagination, CancellationToken cancellationToken = default);
 }

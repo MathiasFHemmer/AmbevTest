@@ -11,8 +11,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Sales;
 public static class CreateSaleHandlerTestData
 {
     /// <summary>
-    /// Configures the Faker to generate valid Sale entities.
-    /// The generated sale will have valid:
+    /// Configures the Faker to generate valid CreateSaleCommand.
+    /// The generated command will have valid:
     /// - SaleNumber (valid alphanumeric combination)
     /// - CustomerId (Valid random Guid)
     /// - BranchId (Valid random Guid)
@@ -23,10 +23,10 @@ public static class CreateSaleHandlerTestData
         .RuleFor(sale => sale.BranchId, faker => faker.Random.Guid());
     /// <summary>
     /// Generates a valid CreateSaleCommand object with randomized data.
-    /// The generated sale will have all properties populated with valid values
+    /// The generated command will have all properties populated with valid values
     /// that meet the system's validation requirements.
     /// </summary>
-    /// <returns>A valid CreateSaleCommand entity with randomly generated data.</returns>
+    /// <returns>A valid CreateSaleCommand command with randomly generated data.</returns>
     public static CreateSaleCommand Generate()
     {
         return CreateSaleCommandFaker.Generate();

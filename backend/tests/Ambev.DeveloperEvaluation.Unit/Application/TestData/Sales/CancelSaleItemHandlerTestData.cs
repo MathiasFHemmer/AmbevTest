@@ -12,7 +12,7 @@ public static class CancelSaleItemHandlerTestData
 {
     /// <summary>
     /// Configures the Faker to generate valid CancelSaleItem command.
-    /// The generated sale will have valid:
+    /// The generated command will have valid:
     /// - SaleId (Valid random Guid)
     /// - ProductId (Valid random Guid)
     /// </summary>
@@ -21,10 +21,10 @@ public static class CancelSaleItemHandlerTestData
         .RuleFor(sale => sale.ProductId, faker => faker.Random.Guid());
     /// <summary>
     /// Generates a valid CancelSaleItemCommand command with randomized data.
-    /// The generated sale will have all properties populated with valid values
+    /// The generated command will have all properties populated with valid values
     /// that meet the system's validation requirements.
     /// </summary>
-    /// <returns>A valid AddSaleItemCommand command with randomly generated data.</returns>
+    /// <returns>A valid CancelSaleItemCommand command with randomly generated data.</returns>
     public static CancelSaleItemCommand Generate()
     {
         return CancelSaleItemCommandFaker.Generate();

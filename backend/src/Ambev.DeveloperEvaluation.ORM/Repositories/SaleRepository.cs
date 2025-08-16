@@ -1,5 +1,7 @@
+using Ambev.DeveloperEvaluation.Common.Pagination;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -34,7 +36,7 @@ public class SaleRepository : ISaleRepository
     }
 
     /// <summary>
-    /// Retrieves a sale by their unique identifier
+    /// Retrieves a sale by their unique identifier, with Sale Items entities.
     /// </summary>
     /// <param name="id">The unique identifier of the sale</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -72,5 +74,18 @@ public class SaleRepository : ISaleRepository
         _context.Sales.Update(sale);
         var changed = await _context.SaveChangesAsync(cancellationToken);
         return changed != 0;
+    }
+
+    /// <summary>
+    /// Queries for shallow Sale entities.
+    /// TODO: 
+    /// Implement filtering
+    /// </summary>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Paginated list of Sales</returns>
+    public async Task<PaginatedList<Sale>> ListSales(PaginateRequest pagination, CancellationToken cancellationToken = default)
+    {
+        return await _context.Sales.PaginateAsync((int)pagination.Page, (int)pagination.PageSize, cancellationToken);
     }
 }
