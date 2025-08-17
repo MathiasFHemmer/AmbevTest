@@ -1,17 +1,11 @@
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.SetSaleItemQuantity;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.SetSaleItemQuantity;
 
-/// <summary>
-/// Validator for <see cref="SetSaleItemQuantityCommand"/>
-/// </summary>
-public class SetSaleItemQuantityCommandValidator : AbstractValidator<SetSaleItemQuantityCommand>
+public sealed class SetSaleItemQuantityRequestValidator : AbstractValidator<SetSaleItemQuantityRequest>
 {
-    /// <summary>
-    /// Initializes validation rules for <see cref="SetSaleItemQuantityCommand"/>
-    /// </summary>
-    public SetSaleItemQuantityCommandValidator()
+    public SetSaleItemQuantityRequestValidator()
     {
         RuleFor(command => command.SaleId)
             .NotEmpty().WithMessage("Sale ID is required");

@@ -1,6 +1,6 @@
 namespace Ambev.DeveloperEvaluation.Domain.Exceptions
 {
-    public class DuplicateItemInSaleException : Exception
+    public class DuplicateItemInSaleException : DomainException
     {
         public DuplicateItemInSaleException(string productName) : base($"Product {productName} is already present!")
         {

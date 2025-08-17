@@ -22,7 +22,7 @@ public static class SaleTestData
         return SaleFaker.Generate();
     }
 
-    public static Sale WithDiscountPolicy(this Sale sale, IDiscountPolicy discountPolicy)
+    public static Sale WithDiscountPolicy(this Sale sale, IDiscountPolicy? discountPolicy)
     {
         sale.DiscountPolicy = discountPolicy;
         return sale;

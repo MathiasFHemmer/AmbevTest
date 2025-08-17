@@ -1,18 +1,7 @@
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem
-{
-    /// <summary>
-    /// API response model for AddSaleItem operation
-    /// </summary>
-    public class AddSaleItemResponse
-    {
-        /// <summary>
-        /// Gets or the newly added Sale Item Identifier
-        /// </summary>
-        public Guid Id { get; init; } = Guid.Empty;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 
-        /// <summary>
-        /// Gets or the newly added Sale Item product name
-        /// </summary>
-        public string ProductName { get; init; } = string.Empty;
-    }
+public class AddSaleItemResponse
+{
+    public Guid Id { get; init; } = Guid.Empty;
+    public string ProductName { get; init; } = string.Empty;
 }

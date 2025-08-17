@@ -57,6 +57,5 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
             BranchId = sale.BranchId,
             BranchName = sale.BranchName,
         };
-
     }
 }

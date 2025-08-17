@@ -243,7 +243,7 @@ public class SaleTests
     }
 
     [Fact(DisplayName = "UpdateDiscountPolicy should apply policy to all existing items")]
-    public void Given_ExistingItems_When_UpdatingDiscountPolicy_Then_ShouldRecalculateDiscounts()
+    public void Given_ExistingItems_When_UpdatingDiscountPolicy_Then_ShouldRecalculateDiscountsAndTotal()
     {
         // Arrange
         var discountPolicyMock = Substitute.For<IDiscountPolicy>();
@@ -256,11 +256,16 @@ public class SaleTests
             .WithSaleItem(saleItem1)
             .WithSaleItem(saleItem2);
 
+        var expectedTotal =
+            saleItem1.TotalPrice * (1 - discountPolicyMock.GetDiscount(saleItem1)) +
+            saleItem2.TotalPrice * (1 - discountPolicyMock.GetDiscount(saleItem2));
+
         // Act
         sale.UpdateDiscountPolicy(discountPolicyMock);
 
         // Assert
         Assert.Equal(0.2m, sale.GetItem(saleItem1.ProductId)!.Discount);
         Assert.Equal(0.2m, sale.GetItem(saleItem2.ProductId)!.Discount);
+        Assert.NotEqual(expectedTotal, sale.TotalAmount);
     }
 }

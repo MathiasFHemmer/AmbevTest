@@ -146,6 +146,7 @@ public class Sale : BaseEntity
         DiscountPolicy = discountPolicy;
         foreach (var item in _saleItems)
             item.ApplyDiscountPolicy(discountPolicy);
+        RecalculateTotal();
     }
 
     /// <summary>
@@ -203,7 +204,7 @@ public class Sale : BaseEntity
             saleItem.ApplyDiscountPolicy(DiscountPolicy);
 
         if (!SaleItemQuantityLimitSpecification.Instance.IsSatisfiedBy(saleItem))
-            throw new DomainException($"Cannot add more than {MaxItemsPerSale} units of a single product to a sale.");
+            throw new SaleItemQuantityLimitException(MaxItemsPerSale);
 
         _saleItems.Add(saleItem);
         RecalculateTotal();
@@ -237,10 +238,13 @@ public class Sale : BaseEntity
         var item = _saleItems.FirstOrDefault(item => item.ProductId == productId);
         if (item is null)
             throw new DomainException("Item does not exists on this sale!");
-
+        
         item.UpdateItemQuantity(newQuantity);
         if (DiscountPolicy is not null)
             item.ApplyDiscountPolicy(DiscountPolicy);
+
+        if (!SaleItemQuantityLimitSpecification.Instance.IsSatisfiedBy(item))
+            throw new SaleItemQuantityLimitException(MaxItemsPerSale);
 
         RecalculateTotal();
     }

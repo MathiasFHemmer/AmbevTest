@@ -71,4 +71,24 @@ public sealed class SetSaleItemQuantityHandlerTests
         // Act & Assert
         await Assert.ThrowsAsync<DomainException>(() => _handler.Handle(command, CancellationToken.None));
     }
+
+    [Fact(DisplayName = "Should throw when quantity exceeds max allowed policy")]
+    public async Task Handle_QuantityExceedsPolicy_ThrowsDomainException()
+    {
+        // Arrange
+        var saleItem = SaleItemTestData.Generate();
+        var sale = SaleTestData.Generate()
+            .WithDiscountPolicy(null)
+            .WithSaleItem(saleItem);
+            
+        _saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
+
+        var command = SetSaleItemQuantityHandlerTestData.Generate()
+            .WithSaleId(sale.Id)
+            .WithProductId(saleItem.ProductId)
+            .WithNewQuantity(Sale.MaxItemsPerSale + 1);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<SaleItemQuantityLimitException>(() => _handler.Handle(command, CancellationToken.None));
+    }
 }

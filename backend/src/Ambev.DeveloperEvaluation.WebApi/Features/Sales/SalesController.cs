@@ -1,14 +1,18 @@
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
+using Ambev.DeveloperEvaluation.Application.Sales.CompleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+using Ambev.DeveloperEvaluation.Application.Sales.SetSaleItemQuantity;
 using Ambev.DeveloperEvaluation.Common.Pagination;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CompleteSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSaleItems;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.SetSaleItemQuantity;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -94,7 +98,7 @@ public class SalesController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Success if item is deleted</returns>
     [HttpDelete("{saleId:guid}/Item/{productId:guid}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelSaleItem(Guid saleId, Guid productId, CancellationToken cancellationToken)
     {
@@ -122,9 +126,9 @@ public class SalesController : BaseController
     /// </summary>
     /// <param name="pagination"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <returns>A list of sales</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ListSales([PaginationFromQuery] PaginateRequest pagination, CancellationToken cancellationToken)
     {
@@ -143,29 +147,87 @@ public class SalesController : BaseController
     /// <param name="saleId">The sale identifier</param>
     /// <param name="pagination"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <returns>A list of sale items</returns>
     [HttpGet("{saleId:guid}/Items")]
-    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleItemsResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ListSales(
+    public async Task<IActionResult> ListSaleItems(
         Guid saleId,
         [PaginationFromQuery] PaginateRequest pagination, CancellationToken cancellationToken)
     {
         var request = new ListSaleItemsRequest
         {
-            SaleId = saleId
+            SaleId = saleId,
+            Pagination = pagination
         };
 
         await new ListSaleItemsRequestValidator()
             .ValidateAsync(request, cancellationToken)
             .ThrowIfInvalid();
 
-        var command = _mapper.Map<ListSaleItemsCommand>(pagination);
+        var command = _mapper.Map<ListSaleItemsCommand>(request);
         var result = await _mediator.Send(command, cancellationToken);
         return Ok(new ApiResponseWithData<ListSaleItemsResponse>
         {
             Success = true,
             Data = _mapper.Map<ListSaleItemsResponse>(result),
+        });
+    }
+
+    /// <summary>
+    /// Marks a Sale as completed.
+    /// </summary>
+    /// <param name="saleId">The sale identifier</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Success if the sale was completed.</returns>
+    [HttpPost("{saleId:guid}/Complete")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CompleteSale(Guid saleId, CancellationToken cancellationToken)
+    {
+        var request = new CompleteSaleRequest
+        {
+            SaleId = saleId
+        };
+
+        await new CompleteSaleRequestValidator()
+            .ValidateAsync(request, cancellationToken)
+            .ThrowIfInvalid();
+
+        var command = _mapper.Map<CompleteSaleCommand>(request);
+        await _mediator.Send(command);
+
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "Sale completed successfully!"
+        });
+    }
+
+    /// <summary>
+    /// Sets a new sale item quantity.
+    /// </summary>
+    /// <param name="saleId">The sale identifier</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Success if the sale was completed.</returns>
+    [HttpPost("{saleId:guid}/Item/{productId:guid}/UpdateQuantity")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ListSales(Guid saleId, Guid productId, SetSaleItemQuantityRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        request.ProductId = productId;
+        await new SetSaleItemQuantityRequestValidator()
+            .ValidateAsync(request, cancellationToken)
+            .ThrowIfInvalid();
+
+        var command = _mapper.Map<SetSaleItemQuantityCommand>(request);
+        await _mediator.Send(command);
+
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "Sale item quantity set successfully!"
         });
     }
 }
