@@ -26,6 +26,8 @@ public interface ISaleRepository
     /// <returns>The sale if found, null otherwise</returns>
     Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
+
+
     /// <summary>
     /// Deletes a sale from the repository
     /// </summary>
@@ -43,10 +45,19 @@ public interface ISaleRepository
     Task<bool> UpdateAsync(Sale sale, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Handles paginated requests for listing sales
+    /// Handles paginated requests for listing sale items
     /// </summary>
     /// <param name="pagination"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>A paginated list of sales </returns>
     Task<PaginatedList<Sale>> ListSales(PaginateRequest pagination, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paginated list of sale items from a sale.
+    /// </summary>
+    /// <param name="saleId"></param>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The sale if found, null otherwise</returns>
+    Task<PaginatedList<SaleItem>> ListSaleItemsBySaleId(Guid saleId, PaginateRequest pagination, CancellationToken cancellationToken = default);
 }

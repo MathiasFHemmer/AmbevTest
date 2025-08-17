@@ -150,29 +150,31 @@ public class Sale : BaseEntity
     /// <summary>
     /// Cancels the Sale.
     /// </summary>
-    public void Cancel()
+    public bool Cancel()
     {
         if (Status == SaleStatus.Cancelled)
-            return;
+            return false;
 
         Status = SaleStatus.Cancelled;
         UpdatedAt = DateTime.UtcNow;
+        return true;
     }
 
     /// <summary>
     /// Completes the Sale
     /// </summary>
-    public void Complete()
+    public bool Complete()
     {
         if (Status == SaleStatus.Completed)
-            return;
+            return false;
 
         if (Status == SaleStatus.Cancelled)
-            throw new DomainException("Cannot set a cancelled Sale as completed!");
+            throw new DomainException($"Cannot set a {SaleStatus.Cancelled} Sale as completed!");
 
         Status = SaleStatus.Completed;
         UpdatedAt = DateTime.UtcNow;
         CompletedAt = DateTime.UtcNow;
+        return true;
     }
 
     /// <summary>

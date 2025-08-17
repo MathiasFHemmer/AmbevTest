@@ -32,15 +32,4 @@ public sealed class CreateSaleCommand : IRequest<CreateSaleResult>
     /// Gets or Sets the Branch Id
     /// </summary>
     public Guid BranchId { get; set; } = Guid.Empty;
-    
-    public ValidationResultDetail Validate()
-    {
-        var validator = new CreateSaleCommandValidator();
-        var result = validator.Validate(this);
-        return new ValidationResultDetail
-        {
-            IsValid = result.IsValid,
-            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
-        };
-    }
 }

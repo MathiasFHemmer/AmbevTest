@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+using Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 using Ambev.DeveloperEvaluation.Common.Pagination;
 using Bogus;
 
@@ -9,14 +9,15 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.TestData.Sales;
 /// This class centralizes all test data generation to ensure consistency
 /// across test cases and provide both valid and invalid data scenarios.
 /// </summary>
-public static class ListSalesHandlerTestData
+public static class ListSaleItemsHandlerTestData
 {
     /// <summary>
     /// Configures the Faker to generate valid ListSaleCommand command.
     /// The generated sale will have valid:
     /// - Default pagination parameters
     /// </summary>
-    private static readonly Faker<ListSaleCommand> ListSaleCommandFaker = new Faker<ListSaleCommand>()
+    private static readonly Faker<ListSaleItemCommand> ListSaleItemsCommandFaker = new Faker<ListSaleItemCommand>()
+        .RuleFor(sale => sale.SaleId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.Pagination, PaginateRequest.Default);
 
     /// <summary>
@@ -25,8 +26,8 @@ public static class ListSalesHandlerTestData
     /// that meet the system's validation requirements.
     /// </summary>
     /// <returns>A valid ListSaleCommand command with randomly generated data.</returns>
-    public static ListSaleCommand Generate()
+    public static ListSaleItemCommand Generate()
     {
-        return ListSaleCommandFaker.Generate();
+        return ListSaleItemsCommandFaker.Generate();
     }
 }

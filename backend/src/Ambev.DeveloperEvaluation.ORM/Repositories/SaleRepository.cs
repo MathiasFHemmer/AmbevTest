@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.Pagination;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.ORM.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -88,4 +89,22 @@ public class SaleRepository : ISaleRepository
     {
         return await _context.Sales.PaginateAsync((int)pagination.Page, (int)pagination.PageSize, cancellationToken);
     }
+
+    /// <summary>
+    /// Queries for sale items from a sale. Only confirmed items are returned
+    /// TODO: 
+    /// Implement filtering
+    /// </summary>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Paginated list of Sales</returns>
+    public async Task<PaginatedList<SaleItem>> ListSaleItemsBySaleId(Guid saleId, PaginateRequest pagination, CancellationToken cancellationToken = default)
+    {
+        return await _context.SaleItems
+            .Where(item => item.SaleId == saleId)
+            .Where(item => item.Status == SaleItemStatus.Confirmed)
+            .PaginateAsync((int)pagination.Page, (int)pagination.PageSize, cancellationToken);
+    }
+
+
 }
