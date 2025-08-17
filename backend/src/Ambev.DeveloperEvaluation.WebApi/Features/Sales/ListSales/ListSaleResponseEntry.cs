@@ -1,14 +1,10 @@
 using Ambev.DeveloperEvaluation.Domain.Enums.Sales;
 using Ambev.DeveloperEvaluation.ORM.Pagination;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales;
-
-public sealed class ListSaleResult : PaginatedList<ListSaleResultEntry>
+public sealed class ListSaleResponse : PaginatedList<ListSaleResponseEntry>
 {
-    public ListSaleResult() : base([], 0, 1, 10){}
-    public ListSaleResult(IEnumerable<ListSaleResultEntry> items, uint count, uint pageNumber, uint pageSize) : base(items, count, pageNumber, pageSize) { }
 }
-public sealed class ListSaleResultEntry
+public sealed class ListSaleResponseEntry
 {
     public string SaleNumber { get; set; } = string.Empty;
     public DateTime SaleDate { get; internal set; } = DateTime.UtcNow;
@@ -23,3 +19,17 @@ public sealed class ListSaleResultEntry
     public DateTime? CompletedAt { get; internal set; }
 }
 
+// public sealed class ListSaleItem
+// {
+//     public Guid SaleId { get; set; } = Guid.Empty;
+//     public Guid ProductId { get; set; } = Guid.Empty;
+//     public string ProductName { get; set; } = string.Empty;
+//     public uint Quantity { get; set; } = 1;
+//     public decimal UnitPrice { get; set; } = 0m;
+//     public decimal Discount { get; set; } = 0m;
+//     public decimal TotalAmount => Quantity * UnitPrice;
+//     public decimal TotalWithDiscount => TotalAmount * (1 - Discount);
+//     public SaleItemStatus Status { get; set; } = SaleItemStatus.Unknown;
+//     public DateTime CreatedAt { get; set; }
+//     public DateTime? UpdatedAt { get; set; }
+// }

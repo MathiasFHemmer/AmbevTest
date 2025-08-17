@@ -103,7 +103,7 @@ public class UsersController : BaseController
             .ValidateAsync(request, cancellationToken)
             .ThrowIfInvalid();
 
-        var command = _mapper.Map<DeleteUserCommand>(request.Id);
+        var command = _mapper.Map<DeleteUserCommand>(request);
         await _mediator.Send(command, cancellationToken);
 
         return Ok(new ApiResponse

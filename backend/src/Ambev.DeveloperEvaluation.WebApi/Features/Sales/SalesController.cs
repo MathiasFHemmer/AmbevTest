@@ -1,6 +1,9 @@
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+using Ambev.DeveloperEvaluation.Common.Pagination;
+using Ambev.DeveloperEvaluation.ORM.Pagination;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
@@ -82,15 +85,16 @@ public class SalesController : BaseController
     }
 
     /// <summary>
-    /// Adds a new Sale Item to the Sale
+    /// Cancel a Sale Item on the Sale
     /// </summary>
-    /// <param name="request">The sale item creation request</param>
+    /// <param name="SaleId">The sale to be looked in for the item to cancel</param>
+    /// <param name="ProductId">The product id from the sale item to be canceled</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The created sale item identifier</returns>
+    /// <returns>Success if item is deleted</returns>
     [HttpDelete("{SaleId:guid}/Item/{ProductId:guid}")]
     [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateSaleItem([FromRoute] Guid SaleId, Guid ProductId, CancellationToken cancellationToken)
+    public async Task<IActionResult> CancelSaleItem([FromRoute] Guid SaleId, Guid ProductId, CancellationToken cancellationToken)
     {
         var request = new CancelSaleItemRequest
         {
@@ -108,6 +112,20 @@ public class SalesController : BaseController
         {
             Success = true,
             Message = "Product cancelled from sale successfully!"
+        });
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ListSales([PaginationFromQuery] PaginateRequest pagination, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<ListSaleCommand>(pagination);
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(new ApiResponseWithData<ListSaleResponse>
+        {
+            Success = true,
+            Data = _mapper.Map<ListSaleResponse>(result),
         });
     }
 }

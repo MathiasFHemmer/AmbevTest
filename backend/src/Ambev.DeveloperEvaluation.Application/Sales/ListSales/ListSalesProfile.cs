@@ -14,8 +14,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales
         /// </summary>
         public ListSalesProfile()
         {
-            CreateMap<PaginatedList<Sale>, ListSaleResult>()
-                .ForMember(result => result.Data, opt => opt.MapFrom(src => src));
+            CreateMap<Sale, ListSaleResultEntry>();
+            CreateMap<PaginatedList<Sale>, ListSaleResult>();
         }
     }
 }

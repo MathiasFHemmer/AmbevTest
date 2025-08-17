@@ -12,11 +12,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Sales;
 public static class ListSalesHandlerTestData
 {
     /// <summary>
-    /// Configures the Faker to generate valid Sale entities.
+    /// Configures the Faker to generate valid ListSaleCommand command.
     /// The generated sale will have valid:
-    /// - SaleNumber (valid alphanumeric combination)
-    /// - CustomerId (Valid random Guid)
-    /// - BranchId (Valid random Guid)
+    /// - Default pagination parameters
     /// </summary>
     private static readonly Faker<ListSaleCommand> ListSaleCommandFaker = new Faker<ListSaleCommand>()
         .RuleFor(sale => sale.Pagination, PaginateRequest.Default);
