@@ -3,18 +3,17 @@ using MediatR;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+
 /// <summary>
 /// Handler for processing ListSalesHandler requests
 /// </summary>
 public sealed class ListSalesHandler : IRequestHandler<ListSaleCommand, ListSaleResult>
 {
-
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
 
-
     /// <summary>
-    /// Initializes a new instance of CreateSaleHandler
+    /// Initializes a new instance of ListSalesHandler
     /// </summary>
     /// <param name="saleRepository">The sale repository</param>
     /// /// <param name="mapper">The mapper</param>
@@ -25,7 +24,7 @@ public sealed class ListSalesHandler : IRequestHandler<ListSaleCommand, ListSale
     }
 
     /// <summary>
-    /// Handles the ListSaleCommand request
+    /// Handles the ListSaleCommand command
     /// </summary>
     /// <param name="command">The ListSaleCommand command</param>
     /// <param name="cancellationToken">Cancellation token</param>

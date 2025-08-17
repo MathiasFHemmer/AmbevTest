@@ -3,11 +3,11 @@ using Ambev.DeveloperEvaluation.ORM.Pagination;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 
-public sealed class ListSaleItemResult : PaginatedList<ListSaleItemResultEntry>
+public sealed class ListSaleItemsResult : PaginatedList<ListSaleItemResultEntry>
 {
-    public ListSaleItemResult() : base(Array.Empty<ListSaleItemResultEntry>(), 0, 1, 10) { }
+    public ListSaleItemsResult() : base(Array.Empty<ListSaleItemResultEntry>(), 0, 1, 10) { }
 
-    public ListSaleItemResult(IEnumerable<ListSaleItemResultEntry> items, uint count, uint pageNumber, uint pageSize)
+    public ListSaleItemsResult(IEnumerable<ListSaleItemResultEntry> items, uint count, uint pageNumber, uint pageSize)
         : base(items, count, pageNumber, pageSize) { }
 }
 

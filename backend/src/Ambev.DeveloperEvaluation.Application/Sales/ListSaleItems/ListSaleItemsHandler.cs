@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 /// <summary>
 /// Handler for processing ListSaleItemCommand requests
 /// </summary>
-public sealed class ListSaleItemsHandler : IRequestHandler<ListSaleItemCommand, ListSaleItemResult>
+public sealed class ListSaleItemsHandler : IRequestHandler<ListSaleItemsCommand, ListSaleItemsResult>
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
@@ -18,9 +18,9 @@ public sealed class ListSaleItemsHandler : IRequestHandler<ListSaleItemCommand, 
         _mapper = mapper;
     }
 
-    public async Task<ListSaleItemResult> Handle(ListSaleItemCommand command, CancellationToken cancellationToken)
+    public async Task<ListSaleItemsResult> Handle(ListSaleItemsCommand command, CancellationToken cancellationToken)
     {
         var items = await _saleRepository.ListSaleItemsBySaleId(command.SaleId, command.Pagination, cancellationToken);
-        return _mapper.Map<ListSaleItemResult>(items);
+        return _mapper.Map<ListSaleItemsResult>(items);
     }
 }

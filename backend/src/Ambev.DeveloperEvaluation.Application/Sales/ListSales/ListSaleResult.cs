@@ -10,6 +10,7 @@ public sealed class ListSaleResult : PaginatedList<ListSaleResultEntry>
 }
 public sealed class ListSaleResultEntry
 {
+    public Guid Id { get; set; } = Guid.Empty;
     public string SaleNumber { get; set; } = string.Empty;
     public DateTime SaleDate { get; internal set; } = DateTime.UtcNow;
     public Guid CustomerId { get; internal set; } = Guid.Empty;

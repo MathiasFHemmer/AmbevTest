@@ -12,6 +12,6 @@ public class ListSaleItemsProfile : Profile
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
             .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount));
 
-        CreateMap<PaginatedList<SaleItem>, ListSaleItemResult>();
+        CreateMap<PaginatedList<SaleItem>, ListSaleItemsResult>();
     }
 }

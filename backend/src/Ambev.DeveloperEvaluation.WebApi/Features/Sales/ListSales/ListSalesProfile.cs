@@ -1,9 +1,6 @@
 using AutoMapper;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Common.Pagination;
-using Microsoft.OpenApi.Writers;
-using Ambev.DeveloperEvaluation.ORM.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 

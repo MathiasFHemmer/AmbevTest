@@ -18,8 +18,9 @@ public class Sale : BaseEntity
     /// <summary>
     /// Gets the Sale Discount Policy.
     /// Sales can have a null discount policy, meaning no discount should be applied for this sale.
+    /// The default discount policy is <see cref="QuantityBasedDiscountPolicy"/> 
     /// </summary>
-    public IDiscountPolicy? DiscountPolicy { get; internal set; }
+    public IDiscountPolicy? DiscountPolicy { get; internal set; } = new QuantityBasedDiscountPolicy();
 
     /// <summary>
     /// Gets or Sets this Sale number.

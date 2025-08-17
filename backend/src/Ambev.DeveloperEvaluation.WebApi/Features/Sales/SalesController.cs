@@ -1,13 +1,14 @@
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Common.Pagination;
-using Ambev.DeveloperEvaluation.ORM.Pagination;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSaleItems;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -57,23 +58,24 @@ public class SalesController : BaseController
     /// <summary>
     /// Adds a new Sale Item to the Sale
     /// </summary>
+    /// <param name="saleId">The sale identifier to create an item at</param>
     /// <param name="request">The sale item creation request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created sale item identifier</returns>
-    [HttpPost("{SaleId:guid}/Items")]
+    [HttpPost("{saleId:guid}/Items")]
     [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateSaleItem([FromRoute] Guid SaleId, [FromBody] AddSaleItemRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateSaleItem(Guid saleId, [FromBody] AddSaleItemRequest request, CancellationToken cancellationToken)
     {
         await new AddSaleItemRequestValidator()
             .ValidateAsync(request, cancellationToken)
             .ThrowIfInvalid();
 
-        if (SaleId == Guid.Empty)
-            throw new ValidationException($"{nameof(SaleId)} must be present!");
+        if (saleId == Guid.Empty)
+            throw new ValidationException($"{nameof(saleId)} must be present!");
 
         var command = _mapper.Map<AddSaleItemCommand>(request);
-        command.SaleId = SaleId;
+        command.SaleId = saleId;
         var response = await _mediator.Send(command, cancellationToken);
 
         return Created(string.Empty, new ApiResponseWithData<AddSaleItemResponse>
@@ -87,19 +89,19 @@ public class SalesController : BaseController
     /// <summary>
     /// Cancel a Sale Item on the Sale
     /// </summary>
-    /// <param name="SaleId">The sale to be looked in for the item to cancel</param>
-    /// <param name="ProductId">The product id from the sale item to be canceled</param>
+    /// <param name="saleId">The sale identifier to remove and item from</param>
+    /// <param name="productId">The product id from the sale item to be canceled</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Success if item is deleted</returns>
-    [HttpDelete("{SaleId:guid}/Item/{ProductId:guid}")]
+    [HttpDelete("{saleId:guid}/Item/{productId:guid}")]
     [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CancelSaleItem([FromRoute] Guid SaleId, Guid ProductId, CancellationToken cancellationToken)
+    public async Task<IActionResult> CancelSaleItem(Guid saleId, Guid productId, CancellationToken cancellationToken)
     {
         var request = new CancelSaleItemRequest
         {
-            SaleId = SaleId,
-            ProductId = ProductId
+            SaleId = saleId,
+            ProductId = productId
         };
         await new CancelSaleItemRequestValidator()
             .ValidateAsync(request, cancellationToken)
@@ -115,6 +117,12 @@ public class SalesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Gets a list of all the sales without its item contents. To get the items, query for them on the ListSaleItems
+    /// </summary>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
@@ -126,6 +134,38 @@ public class SalesController : BaseController
         {
             Success = true,
             Data = _mapper.Map<ListSaleResponse>(result),
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of all the sales items from a Sale.
+    /// </summary>
+    /// <param name="saleId">The sale identifier</param>
+    /// <param name="pagination"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{saleId:guid}/Items")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSaleResponseEntry>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ListSales(
+        Guid saleId,
+        [PaginationFromQuery] PaginateRequest pagination, CancellationToken cancellationToken)
+    {
+        var request = new ListSaleItemsRequest
+        {
+            SaleId = saleId
+        };
+
+        await new ListSaleItemsRequestValidator()
+            .ValidateAsync(request, cancellationToken)
+            .ThrowIfInvalid();
+
+        var command = _mapper.Map<ListSaleItemsCommand>(pagination);
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(new ApiResponseWithData<ListSaleItemsResponse>
+        {
+            Success = true,
+            Data = _mapper.Map<ListSaleItemsResponse>(result),
         });
     }
 }

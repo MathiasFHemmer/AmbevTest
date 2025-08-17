@@ -6,14 +6,14 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ListSaleItems;
 /// <summary>
 /// Command for retrieving paginated sale items.
 /// </summary>
-public sealed class ListSaleItemCommand : IRequest<ListSaleItemResult>
+public sealed class ListSaleItemsCommand : IRequest<ListSaleItemsResult>
 {
     public Guid SaleId { get; set; } = Guid.Empty;
     public PaginateRequest Pagination { get; set; }
 
-    public ListSaleItemCommand() : this(PaginateRequest.Default) { }
+    public ListSaleItemsCommand() : this(PaginateRequest.Default) { }
 
-    public ListSaleItemCommand(PaginateRequest pagination)
+    public ListSaleItemsCommand(PaginateRequest pagination)
     {
         Pagination = pagination ?? PaginateRequest.Default;
     }

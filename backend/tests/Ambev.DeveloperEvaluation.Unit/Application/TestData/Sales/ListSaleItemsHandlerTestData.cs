@@ -16,7 +16,7 @@ public static class ListSaleItemsHandlerTestData
     /// The generated sale will have valid:
     /// - Default pagination parameters
     /// </summary>
-    private static readonly Faker<ListSaleItemCommand> ListSaleItemsCommandFaker = new Faker<ListSaleItemCommand>()
+    private static readonly Faker<ListSaleItemsCommand> ListSaleItemsCommandFaker = new Faker<ListSaleItemsCommand>()
         .RuleFor(sale => sale.SaleId, faker => faker.Random.Guid())
         .RuleFor(sale => sale.Pagination, PaginateRequest.Default);
 
@@ -26,7 +26,7 @@ public static class ListSaleItemsHandlerTestData
     /// that meet the system's validation requirements.
     /// </summary>
     /// <returns>A valid ListSaleCommand command with randomly generated data.</returns>
-    public static ListSaleItemCommand Generate()
+    public static ListSaleItemsCommand Generate()
     {
         return ListSaleItemsCommandFaker.Generate();
     }
